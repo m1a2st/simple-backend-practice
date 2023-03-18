@@ -10,7 +10,7 @@
     * U -> 存款, 提款, 轉帳
     * D -> 停用, 凍結
 
-## 💪 展現你有以下的能力 (括號內以 Java Spring 為例，其他語言或框架可自行代換)
+## 括號內以 Java Spring 為例，其他語言或框架可自行代換
 | 是否有使用 | 能力 | 範例技術 |
 |:------| :--- | :--- |
 |       | 📝 撰寫 RESTFul API 文件 | [springdoc-openapi](https://springdoc.org/) |

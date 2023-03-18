@@ -1,0 +1,104 @@
+# 它的主要功用是用來設置應用程式在執行時使用的配置文件（或稱為環境）
+spring:
+  profiles:
+    active: ide
+  # JDBC 資料庫連接驅動程式名稱
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    # JPA 所使用的資料庫平台
+    database-platform: org.hibernate.dialect.PostgresSQLDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+logging:
+  level:
+    org:
+      hibernate:
+        # 的日誌層級設置為 DEBUG，表示輸出生成的 SQL 語句。
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              # 表示輸出在綁定參數時使用的相關信息，例如綁定參數的值和類型。
+              BasicBinder: TRACE
+
+springdoc:
+  swagger-ui:
+    # 表示不展開文檔，默認為列表形式。
+    doc-expansion: none
+    # 表示按字母順序排序操作。
+    operations-sorter: alpha
+    # 表示按字母順序排序標籤。
+    tags-sorter: alpha
+custom:
+  avatar:
+    # 表示設置自定義的 URI 地址，用於顯示 Swagger UI 中的項目信息。
+    uri: https://random.dog/woof
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: ide
+  redis:
+    password: root
+  data:
+    mongodb:
+      username: mongo
+      password: mongo
+      database: mongo
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: root
+
+---
+
+#spring:
+#  config:
+#    activate:
+#      on-profile: arm
+#  redis:
+#    password: rootroot
+#  data:
+#    mongodb:
+#      authentication-database: admin
+#      username: root
+#      password: rootroot
+#      database: test
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    username: postgres
+#    password: rootroot
+
+---
+
+#spring:
+#  config:
+#    activate:
+#      on-profile: docker
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#  redis:
+#    host: redis
+#    password: rootroot
+#  data:
+#    mongodb:
+#      host: mongodb
+#      username: mongo
+#      password: mongo
+#      database: mongo
+#  datasource:
+#    url: jdbc:postgresql://postgresql:5432/postgres
+#    username: postgres
+#    password: root
