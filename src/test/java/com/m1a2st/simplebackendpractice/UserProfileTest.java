@@ -9,16 +9,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @Author m1a2st
  * @Date 2023/3/18
  * @Version v1.0
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest()
 @AutoConfigureMockMvc
 public class UserProfileTest {
 
@@ -29,17 +33,17 @@ public class UserProfileTest {
     UserProfileRepository repository;
 
     @Test
-    void defaultTest(){
+    void defaultTest() {
 
     }
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         repository.deleteAll();
     }
 
     @Test
-    void insertUser(){
+    void insertUser() {
         UserProfile ken = UserProfile.builder()
                 .username("Ken")
                 .password("123")
@@ -48,7 +52,23 @@ public class UserProfileTest {
                 .build();
         repository.save(ken);
         UserProfile result = repository.findByUsername("Ken").orElseGet(UserProfile::new);
-        assertEquals(result.getUsername(),"Ken");
+        assertEquals(result.getUsername(), "Ken");
     }
+
+    @Test
+    void signUp_successful() throws Exception {
+        mockMvc.perform(post("/api/v1.0/user:signUp")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("username", "Ken")
+                        .param("password", "123")
+                        .param("repeatPassword", "123"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("username").exists())
+                .andExpect(jsonPath("message").exists())
+                .andExpect(jsonPath("password").doesNotExist());
+    }
+
+    
 
 }
