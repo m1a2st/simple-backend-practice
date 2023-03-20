@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -56,12 +57,8 @@ public class UserProfileTest {
     }
 
     @Test
-    void signUp_successful() throws Exception {
-        mockMvc.perform(post("/api/v1.0/user:signUp")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("username", "Ken")
-                        .param("password", "123")
-                        .param("repeatPassword", "123"))
+    void signup_successful() throws Exception {
+        signup("Ken")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(jsonPath("username").exists())
@@ -69,6 +66,34 @@ public class UserProfileTest {
                 .andExpect(jsonPath("password").doesNotExist());
     }
 
-    
+    private ResultActions signup(String username) throws Exception {
+        return mockMvc.perform(post("/api/v1.0/user:signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("username", username)
+                .param("password", "123")
+                .param("repeatPassword", "123"));
+    }
+
+    @Test
+    void signup_username_isNull() throws Exception {
+        mockMvc.perform(post("/api/v1.0/user:signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("password", "123")
+                .param("repeatPassword", "123"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void signup_username_is_same() throws Exception {
+        signup("Ken")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("username").exists())
+                .andExpect(jsonPath("message").exists())
+                .andExpect(jsonPath("password").doesNotExist());
+
+        signup("Ken")
+                .andExpect(status().isBadRequest());
+    }
 
 }
