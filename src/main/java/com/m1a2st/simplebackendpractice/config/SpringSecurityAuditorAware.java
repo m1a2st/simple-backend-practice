@@ -1,8 +1,6 @@
 package com.m1a2st.simplebackendpractice.config;
 
-import com.m1a2st.simplebackendpractice.user.po.UserProfile;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
