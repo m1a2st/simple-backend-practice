@@ -3,6 +3,7 @@ package com.m1a2st.simplebackendpractice.user.po;
 import com.m1a2st.simplebackendpractice.user.enu.UserRole;
 import com.m1a2st.simplebackendpractice.user.enu.UserStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -30,9 +31,9 @@ public class UserProfile implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @NotBlank
     private String username;
-
+    @NotBlank
     private String password;
 
     @Enumerated(EnumType.STRING)
