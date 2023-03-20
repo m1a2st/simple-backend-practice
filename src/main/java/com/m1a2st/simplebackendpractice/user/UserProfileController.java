@@ -18,7 +18,7 @@ public class UserProfileController {
 
     private final UserProfileService userProfileService;
 
-    public UserProfileController(UserProfileService userProfileService) {
+    public UserProfileController(@Valid UserProfileService userProfileService) {
         this.userProfileService = userProfileService;
     }
 
