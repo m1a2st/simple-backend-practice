@@ -2,6 +2,7 @@ package com.m1a2st.simplebackendpractice.user;
 
 import com.m1a2st.simplebackendpractice.user.dto.UserProfileReqDTO;
 import com.m1a2st.simplebackendpractice.user.dto.UserProfileRespDTO;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +22,8 @@ public class UserProfileController {
         this.userProfileService = userProfileService;
     }
 
-    @PostMapping("/user:signUp")
-    public UserProfileRespDTO userSignUp(UserProfileReqDTO userProfileRespDTO){
+    @PostMapping("/user:signup")
+    public UserProfileRespDTO userSignUp(@Valid UserProfileReqDTO userProfileRespDTO){
         return userProfileService.signUp(userProfileRespDTO);
     }
 }
