@@ -23,14 +23,18 @@ public class UserProfileService {
         this.userProfileRepository = userProfileRepository;
     }
 
-    public UserProfileRespDTO signUp(UserProfileReqDTO userProfileRespDTO) {
-        UserProfile signUpUser = UserProfile.builder()
+    public UserProfileRespDTO signup(UserProfileReqDTO userProfileRespDTO) {
+        String insertUsername = userProfileRespDTO.getUsername();
+        if(userProfileRepository.existsByUsername(insertUsername)){
+            throw new IllegalArgumentException("This username is Duplicate");
+        }
+        UserProfile signupUser = UserProfile.builder()
                 .username(userProfileRespDTO.getUsername())
                 .password(userProfileRespDTO.getPassword())
-                .role(UserRole.DEFAULT)
+                .role(UserRole.ROLE_DEFAULT)
                 .status(UserStatus.ACTIVE)
                 .build();
-        userProfileRepository.save(signUpUser);
-        return new UserProfileRespDTO().toDto(signUpUser,"Signup success");
+        userProfileRepository.save(signupUser);
+        return new UserProfileRespDTO().toDto(signupUser,"Signup success");
     }
 }

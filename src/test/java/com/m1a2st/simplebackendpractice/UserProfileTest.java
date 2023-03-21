@@ -49,7 +49,7 @@ public class UserProfileTest {
                 .username("Ken")
                 .password("123")
                 .status(UserStatus.ACTIVE)
-                .role(UserRole.ADMIN)
+                .role(UserRole.ROLE_ADMIN)
                 .build();
         repository.save(ken);
         UserProfile result = repository.findByUsername("Ken").orElseGet(UserProfile::new);
@@ -84,13 +84,9 @@ public class UserProfileTest {
     }
 
     @Test
-    void signup_username_is_same() throws Exception {
+    void signup_cannotDuplicateUsername() throws Exception {
         signup("Ken")
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").exists())
-                .andExpect(jsonPath("username").exists())
-                .andExpect(jsonPath("message").exists())
-                .andExpect(jsonPath("password").doesNotExist());
+                .andExpect(status().isOk());
 
         signup("Ken")
                 .andExpect(status().isBadRequest());
