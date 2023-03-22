@@ -2,16 +2,18 @@ package com.m1a2st.simplebackendpractice.user.po;
 
 import com.m1a2st.simplebackendpractice.user.enu.UserRole;
 import com.m1a2st.simplebackendpractice.user.enu.UserStatus;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -19,6 +21,7 @@ import java.util.Date;
  * @Date 2023/3/18
  * @Version v1.0
  */
+
 @Data
 @Builder
 @NoArgsConstructor
