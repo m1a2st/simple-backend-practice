@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 import javax.security.auth.message.AuthException;
 import java.time.Instant;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @Author m1a2st
@@ -26,36 +24,25 @@ public class JwtTokenUtils {
     /**
      * 簽發JWT
      */
-    public static String generateToken(Map<String, String> userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put( "userName", userDetails.get("userName") );
-
+    public String generateToken(String subject, String uuid) {
         return Jwts.builder()
-                .setClaims( claims )
-                .setExpiration( new Date( Instant.now().toEpochMilli() + EXPIRATION_TIME  ) )
-                .signWith( SignatureAlgorithm.HS512, SECRET )
+                .setIssuer("backend")
+                .setSubject(subject)
+                .setExpiration(new Date(Instant.now().toEpochMilli() + EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .setId(uuid)
+                .setNotBefore(new Date())
+                .setIssuedAt(new Date())
                 .compact();
     }
-
     /**
      * 驗證JWT
      */
-    public static void validateToken(String token) throws AuthException {
-        try {
-            Jwts.parser()
-                    .setSigningKey( SECRET )
-                    .parseClaimsJws( token );
-        } catch (MalformedJwtException e) {
-            throw new AuthException("Invalid JWT token.");
-        }
-        catch (ExpiredJwtException e) {
-            throw new AuthException("Expired JWT token");
-        }
-        catch (UnsupportedJwtException e) {
-            throw new AuthException("Unsupported JWT token");
-        }
-        catch (IllegalArgumentException e) {
-            throw new AuthException("JWT token compact of handler are invalid");
-        }
+    public String retrieveSubject(String token){
+        return Jwts.parser()
+                .setSigningKey(SECRET)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 }
