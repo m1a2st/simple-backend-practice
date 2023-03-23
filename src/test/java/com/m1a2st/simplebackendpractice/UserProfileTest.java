@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import java.util.Objects;
 
 import static java.lang.String.format;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -128,7 +129,7 @@ public class UserProfileTest {
 
     @Test
     void user_getProfile() throws Exception {
-        signUpAndLoginDoSomething(get("/api/v1.0/user"))
+        signupAndLoginDoSomething(get("/api/v1.0/user"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(jsonPath("$.username").value("Test"))
@@ -160,14 +161,21 @@ public class UserProfileTest {
 
     @Test
     void user_stop_account_success() throws Exception {
-        signUpAndLoginDoSomething(patch("/api/v1.0//user/{username}:hibernate","Test"))
+        signupAndLoginDoSomething(patch("/api/v1.0//user/{username}:hibernate","Test"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void user_stop_account_fail() throws Exception {
-        signUpAndLoginDoSomething(patch("/api/v1.0//user/{username}:hibernate","m1a2st"))
+        signupAndLoginDoSomething(patch("/api/v1.0//user/{username}:hibernate","m1a2st"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void user_get_records() throws Exception{
+        signupAndLoginDoSomething(get("/api/v1.0/user/records"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content",hasSize(10)));
     }
 
     private ResultActions login(LoginRequestDTO loginRequestDTO) throws Exception {
@@ -184,13 +192,13 @@ public class UserProfileTest {
     }
 
     private ResultActions signupAndLoginAndModifyPassword(MockHttpServletRequestBuilder mockHttpServletRequestBuilder, UserModifyPasswordDTO userModifyPasswordDTO) throws Exception {
-        return signUpAndLoginDoSomething(mockHttpServletRequestBuilder
+        return signupAndLoginDoSomething(mockHttpServletRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(format("{\"oldPassword\":\"%s\",\"newPassword\":\"%s\"}",
                         userModifyPasswordDTO.getOldPassword(), userModifyPasswordDTO.getNewPassword())));
     }
 
-    private ResultActions signUpAndLoginDoSomething(MockHttpServletRequestBuilder mockHttpServletRequestBuilder) throws Exception {
+    private ResultActions signupAndLoginDoSomething(MockHttpServletRequestBuilder mockHttpServletRequestBuilder) throws Exception {
         signup(new UserSignupReqDTO("Test", "123", "123")).andExpect(status().isOk());
         MvcResult result = login(new LoginRequestDTO("Test", "123"))
                 .andExpect(status().isOk())
