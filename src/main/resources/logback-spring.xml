@@ -1,23 +1,48 @@
-<configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
-    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-        <http>
-            <url>http://localhost:3100/loki/api/v1/push</url>
-        </http>
-        <format>
-            <label>
-                <pattern>app=my-app,host=${HOSTNAME},level=%level</pattern>
-            </label>
-            <message>
-                <pattern>l=%level h=${HOSTNAME} c=%logger{20} t=%thread | %msg %ex</pattern>
-            </message>
-            <sortByTime>true</sortByTime>
-        </format>
+<!--<scan>: 當配置文件被修改時，是否進行重載，預設值為 true-->
+<!--<scanPeriod>: 當進行重載時，文件更新後到啟動重載的時間間格設定，預設單位為毫秒，預設為60000ms，也就是1分鐘-->
+<!--<debug>: 是否印出 Logback 服務運行的 Log，預設為 false-->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!--    <property>: 是一個設計固定的 Name 和 Value 的參數，可插入到標註為 ${} 的文中-->
+    <property name="basePath" value="/Users/ken/Desktop"/>
+    <property name="serviceName" value="backend_debug"/>
+    <!--    獲取時間戳記的設定-->
+    <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
+    <!--    負責設定撰寫 Log 的模組節點-->
+    <!--    name: 此 appender 的名稱-->
+    <!--    class: 此 appender 參考的類別程式，其中又有以下分別:-->
+    <!--    ConsoleAppender: 輸出到 Console 的類別程式-->
+    <!--    FileAppender: 輸出到文件的類別程式-->
+    <!--    RollingFileAppender: 輸出到文件的類別程式，會依照設定條件進行 Log File 的分裝。-->
+    <!--    另外還有 SocketAppender、SMTPAppender、DBAppender、SyslogAppender、SiftingAppender 等幫助開發者將 Log 輸出到不同目的的處理-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
     </appender>
+    <appender name="FILE-OUT"
+               class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${basePath}/${serviceName}</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss} - %msg%n
+            </pattern>
+        </encoder>
 
-    <root level="INFO">
-        <!--        <appender-ref ref="LOKI" />-->
-        <appender-ref ref="CONSOLE" />
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${basePath}/archived/debug.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    <!--    與 <logger> 相同元素組成，不同是 <root> 為所有 <logger> 的上級，只有一個 level 屬性可使用，並無法像 logger 一樣用 name 指定實體 class 或Package。但一樣可以指定使用的 Appender-->
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE-OUT"/>
     </root>
 </configuration>
