@@ -1,17 +1,22 @@
 package com.m1a2st.simplebackendpractice.user;
 
-import com.m1a2st.simplebackendpractice.user.dto.UserDetailDTO;
-import com.m1a2st.simplebackendpractice.user.dto.UserModifyPasswordDTO;
-import com.m1a2st.simplebackendpractice.user.dto.UserSignupReqDTO;
-import com.m1a2st.simplebackendpractice.user.dto.UserSignupRespDTO;
+import com.m1a2st.simplebackendpractice.user.dto.*;
+import com.m1a2st.simplebackendpractice.user.enu.UserLoginStatus;
 import com.m1a2st.simplebackendpractice.user.enu.UserRole;
 import com.m1a2st.simplebackendpractice.user.enu.UserStatus;
+import com.m1a2st.simplebackendpractice.user.po.UserLoginDocument;
 import com.m1a2st.simplebackendpractice.user.po.UserProfile;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  * @Author m1a2st
@@ -25,11 +30,13 @@ public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final UserLoginRepository userLoginRepository;
 
-    public UserProfileService(UserProfileRepository userProfileRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+    public UserProfileService(UserProfileRepository userProfileRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UserLoginRepository userLoginRepository) {
         this.userProfileRepository = userProfileRepository;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
+        this.userLoginRepository = userLoginRepository;
     }
 
     public UserProfile queryByUsername(String username) {
@@ -57,6 +64,13 @@ public class UserProfileService {
     public UserProfile login(String username, String password) {
         UserProfile userProfile = queryByUsername(username);
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        userLoginRepository.save(UserLoginDocument.builder()
+                .username(username)
+                .createDate(userProfile.getCreateDate())
+                .lastModifiedDate(userProfile.getLastModifiedDate())
+                .userLoginStatus(UserLoginStatus.LOGIN)
+                .loginTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
+                .build());
         return userProfile;
     }
 
@@ -76,10 +90,22 @@ public class UserProfileService {
         } else {
             throw new IllegalArgumentException("Password is wrong!");
         }
-
     }
 
     public void stopAccount(String username) {
+        UserProfile userProfile = queryByUsername(username);
+        userProfile.setStatus(UserStatus.HIBERNATE);
+        userProfileRepository.save(userProfile);
+    }
 
+    public Page<UserLoginResponseDTO> queryUserRecord(String name, Integer page, Integer size) {
+        Page<UserLoginDocument> loginPage = userLoginRepository
+                .findAllByUsernameOrderByCreateByDesc(name, PageRequest.of(page, size));
+        return loginPage.map(u -> UserLoginResponseDTO.builder()
+                .createBy(u.getCreateBy())
+                .createDate(u.getCreateDate())
+                .lastModifiedDate(u.getLastModifiedDate())
+                .loginTime(u.getLoginTime())
+                .build());
     }
 }

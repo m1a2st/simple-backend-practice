@@ -1,16 +1,15 @@
 package com.m1a2st.simplebackendpractice.user;
 
 import com.m1a2st.simplebackendpractice.config.security.LoginRequestDTO;
-import com.m1a2st.simplebackendpractice.user.dto.UserDetailDTO;
-import com.m1a2st.simplebackendpractice.user.dto.UserModifyPasswordDTO;
-import com.m1a2st.simplebackendpractice.user.dto.UserSignupReqDTO;
-import com.m1a2st.simplebackendpractice.user.dto.UserSignupRespDTO;
+import com.m1a2st.simplebackendpractice.user.dto.*;
+import com.m1a2st.simplebackendpractice.user.po.UserLoginDocument;
 import com.m1a2st.simplebackendpractice.user.po.UserProfile;
 import com.m1a2st.simplebackendpractice.utils.JwtTokenUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +42,6 @@ public class UserProfileController {
 
     private final UserProfileService userProfileService;
     private final JwtTokenUtils jwtTokenUtils;
-    @Value("user.not.found")
-    private String UNKNOWN;
 
     public UserProfileController(@Valid UserProfileService userProfileService, JwtTokenUtils jwtTokenUtils) {
         this.userProfileService = userProfileService;
@@ -61,9 +58,6 @@ public class UserProfileController {
     @PostMapping("/user:login")
     public ResponseEntity<String> userLogin(@RequestBody LoginRequestDTO loginRequestDTO) {
         UserProfile user = userProfileService.login(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
-        if (UNKNOWN.equals(user.getUsername())) {
-            throw new RuntimeException("User not found");
-        }
         String token = jwtTokenUtils.generateToken(user.getUsername(), UUID.randomUUID().toString());
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", token))
@@ -94,6 +88,16 @@ public class UserProfileController {
     public ResponseEntity<Objects> modifyStatus(@PathVariable("username") String username) {
         userProfileService.stopAccount(username);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "登入記錄")
+    @PreAuthorize("hasRole('ROLE_DEFAULT')")
+    @GetMapping("/user/records")
+    public Page<UserLoginResponseDTO> getUserRecord(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            Principal principal) {
+        return userProfileService.queryUserRecord(principal.getName(), page, size);
     }
 
 }
