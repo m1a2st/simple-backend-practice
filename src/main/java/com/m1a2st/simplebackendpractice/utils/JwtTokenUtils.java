@@ -15,7 +15,7 @@ import java.util.Date;
 @Component
 public class JwtTokenUtils {
 
-    private static final long EXPIRATION_TIME = 60 * 1000;
+    private static final long EXPIRATION_TIME = 600 * 1000;
     /**
      * JWT SECRET KEY
      */
