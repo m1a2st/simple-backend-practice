@@ -2,7 +2,6 @@ package com.m1a2st.simplebackendpractice.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +13,6 @@ import java.util.Optional;
  * @Version v1.0
  */
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserSignupReqDTO {

@@ -1,8 +1,8 @@
 package com.m1a2st.simplebackendpractice.user.dto;
 
-import com.m1a2st.simplebackendpractice.user.UserProfileService;
 import com.m1a2st.simplebackendpractice.user.enu.UserStatus;
 import com.m1a2st.simplebackendpractice.user.po.UserProfile;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,12 +21,13 @@ import java.util.Date;
 @Data
 public class UserDetailDTO {
 
+    @Schema(description = "使用者編號")
     private Long id;
-
+    @Schema(description = "使用者名稱")
     private String username;
-
+    @Schema(description = "使用者狀態")
     private UserStatus status;
-
+    @Schema(description = "創造日期")
     private Date createDate;
 
     public UserDetailDTO toDTO(UserProfile userProfile){
