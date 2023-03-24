@@ -1,6 +1,6 @@
 package com.m1a2st.simplebackendpractice.config.security;
 
-import com.m1a2st.simplebackendpractice.user.UserProfileRepository;
+import com.m1a2st.simplebackendpractice.user.repository.UserProfileRepository;
 import com.m1a2st.simplebackendpractice.user.po.UserProfile;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

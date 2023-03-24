@@ -1,7 +1,7 @@
 package com.m1a2st.simplebackendpractice;
 
 import com.m1a2st.simplebackendpractice.config.security.LoginRequestDTO;
-import com.m1a2st.simplebackendpractice.user.UserProfileRepository;
+import com.m1a2st.simplebackendpractice.user.repository.UserProfileRepository;
 import com.m1a2st.simplebackendpractice.user.dto.UserModifyPasswordDTO;
 import com.m1a2st.simplebackendpractice.user.dto.UserSignupReqDTO;
 import com.m1a2st.simplebackendpractice.user.enu.UserRole;
