@@ -1,46 +1,32 @@
 package com.m1a2st.simplebackendpractice.wallet.service;
 
 import com.m1a2st.simplebackendpractice.user.po.UserProfile;
-import com.m1a2st.simplebackendpractice.user.repository.UserProfileRepository;
+import com.m1a2st.simplebackendpractice.wallet.dto.WalletRecordDTO;
 import com.m1a2st.simplebackendpractice.wallet.dto.WalletRespDTO;
 import com.m1a2st.simplebackendpractice.wallet.po.Wallet;
-import com.m1a2st.simplebackendpractice.wallet.repository.WalletRepository;
-import org.springframework.stereotype.Service;
+import com.m1a2st.simplebackendpractice.wallet.vo.WalletRecordVO;
+import org.springframework.data.domain.Page;
+
+import java.math.BigDecimal;
 
 /**
  * @Author m1a2st
  * @Date 2023/3/26
  * @Version v1.0
  */
+public interface WalletService {
 
-@Service
-public class WalletService {
+    UserProfile queryByUsername(String username);
 
-    private final WalletRepository walletRepository;
-    private final UserProfileRepository userProfileRepository;
+    Wallet queryByUserId(Long userId);
 
-    public WalletService(WalletRepository walletRepository, UserProfileRepository userProfileRepository) {
-        this.walletRepository = walletRepository;
-        this.userProfileRepository = userProfileRepository;
-    }
+    WalletRespDTO getWallet(String username);
 
-    public UserProfile queryByUsername(String username) {
-        return userProfileRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not Found"));
-    }
+    WalletRecordDTO deposit(String username, BigDecimal depositAmount);
 
-    public Wallet queryByUserId(Long userId){
-        return walletRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Can't find wallet."));
-    }
+    WalletRecordDTO withdraw(String username, BigDecimal withdrawAmount);
 
-    public WalletRespDTO getWallet(String username) {
-        UserProfile user = queryByUsername(username);
-        Wallet wallet = queryByUserId(user.getId());
-        return WalletRespDTO.builder()
-                .userId(wallet.getUserId())
-                .username(username)
-                .balance(wallet.getBalance())
-                .build();
-    }
+    WalletRecordDTO transfer(String username, Long toUserId, BigDecimal transferMount);
+
+    Page<WalletRecordVO> getWalletRecord(String username, Integer page, Integer size);
 }
