@@ -8,7 +8,13 @@ import com.m1a2st.simplebackendpractice.user.po.UserLoginDocument;
 import com.m1a2st.simplebackendpractice.user.po.UserProfile;
 import com.m1a2st.simplebackendpractice.user.repository.UserLoginRepository;
 import com.m1a2st.simplebackendpractice.user.repository.UserProfileRepository;
+import com.m1a2st.simplebackendpractice.wallet.enu.WalletStatus;
+import com.m1a2st.simplebackendpractice.wallet.po.Wallet;
+import com.m1a2st.simplebackendpractice.wallet.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -33,19 +40,23 @@ public class UserProfileService implements com.m1a2st.simplebackendpractice.user
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserLoginRepository userLoginRepository;
+    private final WalletRepository walletRepository;
 
-    public UserProfileService(UserProfileRepository userProfileRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UserLoginRepository userLoginRepository) {
+    public UserProfileService(UserProfileRepository userProfileRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UserLoginRepository userLoginRepository, WalletRepository walletRepository) {
         this.userProfileRepository = userProfileRepository;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.userLoginRepository = userLoginRepository;
+        this.walletRepository = walletRepository;
     }
 
+    @Cacheable(cacheNames = {"users"}, key="#username")
     @Override
     public UserProfile queryByUsername(String username) {
         return userProfileRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not Found"));
     }
+
 
     @Override
     public UserSignupRespDTO signup(UserSignupReqDTO userProfileRespDTO) {
@@ -62,16 +73,26 @@ public class UserProfileService implements com.m1a2st.simplebackendpractice.user
                 .status(UserStatus.ACTIVE)
                 .build();
         userProfileRepository.save(signupUser);
+        walletRepository.save(Wallet.builder()
+                .userId(signupUser.getId())
+                .balance(BigDecimal.ZERO)
+                .status(WalletStatus.ACTIVE)
+                .build());
+        userLoginRepository.save(UserLoginDocument.builder()
+                .username(signupUser.getUsername())
+                .userLoginStatus(UserLoginStatus.SIGNUP)
+                .loginTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
+                .build());
         return new UserSignupRespDTO().toDto(signupUser, "Signup success");
     }
 
+    @CachePut(cacheNames = {"users"}, key="#result.username")
     @Override
     public UserProfile login(String username, String password) {
         UserProfile userProfile = queryByUsername(username);
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         userLoginRepository.save(UserLoginDocument.builder()
                 .username(username)
-                .createDate(userProfile.getCreateDate())
                 .lastModifiedDate(userProfile.getLastModifiedDate())
                 .userLoginStatus(UserLoginStatus.LOGIN)
                 .loginTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
@@ -99,6 +120,7 @@ public class UserProfileService implements com.m1a2st.simplebackendpractice.user
         }
     }
 
+    @CacheEvict(cacheNames = {"users"}, key = "#username")
     @Override
     public void stopAccount(String username) {
         UserProfile userProfile = queryByUsername(username);

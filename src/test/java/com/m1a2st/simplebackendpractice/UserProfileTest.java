@@ -1,6 +1,8 @@
 package com.m1a2st.simplebackendpractice;
 
 import com.m1a2st.simplebackendpractice.config.security.LoginRequestDTO;
+import com.m1a2st.simplebackendpractice.user.po.UserLoginDocument;
+import com.m1a2st.simplebackendpractice.user.repository.UserLoginRepository;
 import com.m1a2st.simplebackendpractice.user.repository.UserProfileRepository;
 import com.m1a2st.simplebackendpractice.user.dto.UserModifyPasswordDTO;
 import com.m1a2st.simplebackendpractice.user.dto.UserSignupReqDTO;
@@ -47,10 +49,14 @@ public class UserProfileTest {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    UserLoginRepository userLoginRepository;
+
 
     @BeforeEach
     void deleteBeforeEach() {
         repository.deleteAll();
+        userLoginRepository.deleteAll();
     }
 
     @Test
@@ -175,7 +181,7 @@ public class UserProfileTest {
     void user_get_records() throws Exception{
         signupAndLoginDoSomething(get("/api/v1.0/user/records"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content",hasSize(10)));
+                .andExpect(jsonPath("$.content",hasSize(2)));
     }
 
     private ResultActions login(LoginRequestDTO loginRequestDTO) throws Exception {
