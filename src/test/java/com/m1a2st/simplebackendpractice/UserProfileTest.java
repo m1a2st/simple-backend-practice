@@ -1,14 +1,13 @@
 package com.m1a2st.simplebackendpractice;
 
 import com.m1a2st.simplebackendpractice.config.security.LoginRequestDTO;
-import com.m1a2st.simplebackendpractice.user.po.UserLoginDocument;
-import com.m1a2st.simplebackendpractice.user.repository.UserLoginRepository;
-import com.m1a2st.simplebackendpractice.user.repository.UserProfileRepository;
 import com.m1a2st.simplebackendpractice.user.dto.UserModifyPasswordDTO;
 import com.m1a2st.simplebackendpractice.user.dto.UserSignupReqDTO;
 import com.m1a2st.simplebackendpractice.user.enu.UserRole;
 import com.m1a2st.simplebackendpractice.user.enu.UserStatus;
 import com.m1a2st.simplebackendpractice.user.po.UserProfile;
+import com.m1a2st.simplebackendpractice.user.repository.UserLoginRepository;
+import com.m1a2st.simplebackendpractice.user.repository.UserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ public class UserProfileTest {
     private MockMvc mockMvc;
 
     @Autowired
-    UserProfileRepository repository;
+    UserProfileRepository userProfileRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -55,14 +54,14 @@ public class UserProfileTest {
 
     @BeforeEach
     void deleteBeforeEach() {
-        repository.deleteAll();
+        userProfileRepository.deleteAll();
         userLoginRepository.deleteAll();
     }
 
     @Test
     void find_user() throws Exception {
         signup(new UserSignupReqDTO("Ken", "123", "123")).andExpect(status().isOk());
-        UserProfile userProfile = repository.findByUsername("Ken").orElse(new UserProfile());
+        UserProfile userProfile = userProfileRepository.findByUsername("Ken").orElse(new UserProfile());
         assertEquals("Ken", userProfile.getUsername());
         assertEquals(UserStatus.ACTIVE, userProfile.getStatus());
     }
@@ -82,8 +81,8 @@ public class UserProfileTest {
                 .status(UserStatus.ACTIVE)
                 .role(UserRole.ROLE_ADMIN)
                 .build();
-        repository.save(ken);
-        UserProfile result = repository.findByUsername("Ken").orElseGet(UserProfile::new);
+        userProfileRepository.save(ken);
+        UserProfile result = userProfileRepository.findByUsername("Ken").orElseGet(UserProfile::new);
         assertEquals(result.getUsername(), "Ken");
     }
 

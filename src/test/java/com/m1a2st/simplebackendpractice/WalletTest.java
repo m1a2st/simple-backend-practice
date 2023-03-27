@@ -52,6 +52,9 @@ public class WalletTest {
     @Autowired
     private WalletTransactionRecordRepository walletTransactionRecordRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @BeforeEach
     public void deleteData() {
         userProfileRepository.deleteAll();
@@ -154,8 +157,7 @@ public class WalletTest {
     private Long getSignupId(UserSignupReqDTO userSignupReqDTO) throws Exception {
         MvcResult testUser = signup(userSignupReqDTO);
         String resBody = testUser.getResponse().getContentAsString();
-        ObjectMapper obj = new ObjectMapper();
-        UserSignupRespDTO userSignupRespDTO = obj.readValue(resBody, UserSignupRespDTO.class);
+        UserSignupRespDTO userSignupRespDTO = objectMapper.readValue(resBody, UserSignupRespDTO.class);
         return userSignupRespDTO.getId();
     }
 
