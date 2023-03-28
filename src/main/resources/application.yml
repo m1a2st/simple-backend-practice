@@ -1,3 +1,5 @@
+server:
+  port: 8080
 # 它的主要功用是用來設置應用程式在執行時使用的配置文件（或稱為環境）
 spring:
   profiles:
@@ -7,18 +9,21 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     # JPA 所使用的資料庫平台
-    database-platform: org.hibernate.dialect.PostgresSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: '*'
+#  spring actuator 監控服務註解
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      base-path: /manage
 logging:
+  config: classpath:logback-spring.xml
   level:
     org:
       hibernate:
@@ -31,17 +36,21 @@ logging:
               BasicBinder: TRACE
 
 springdoc:
+  api-docs:
+    #API 文件路徑
+    path: /v3/api-docs
   swagger-ui:
+    #UI 文件路徑
+    path: /v3/ui-docs
     # 表示不展開文檔，默認為列表形式。
     doc-expansion: none
     # 表示按字母順序排序操作。
     operations-sorter: alpha
     # 表示按字母順序排序標籤。
     tags-sorter: alpha
-custom:
-  avatar:
-    # 表示設置自定義的 URI 地址，用於顯示 Swagger UI 中的項目信息。
-    uri: https://random.dog/woof
+    # 隱藏UI文件
+#    enabled: false
+########################### 自定義註解 ########################
 
 ---
 
@@ -49,56 +58,36 @@ spring:
   config:
     activate:
       on-profile: ide
-  redis:
-    password: root
   data:
     mongodb:
+      uri: mongodb://127.0.0.1:8888/
+      database: mongo
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Test
+    username: ken
+    password: isabella1637
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+  jpa:
+    hibernate:
+      ddl-auto: update
+  data:
+    mongodb:
+      host: mongodb
       username: mongo
       password: mongo
       database: mongo
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://db:5432/postgres
     username: postgres
     password: root
 
 ---
 
-#spring:
-#  config:
-#    activate:
-#      on-profile: arm
-#  redis:
-#    password: rootroot
-#  data:
-#    mongodb:
-#      authentication-database: admin
-#      username: root
-#      password: rootroot
-#      database: test
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/postgres
-#    username: postgres
-#    password: rootroot
 
----
 
-#spring:
-#  config:
-#    activate:
-#      on-profile: docker
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#  redis:
-#    host: redis
-#    password: rootroot
-#  data:
-#    mongodb:
-#      host: mongodb
-#      username: mongo
-#      password: mongo
-#      database: mongo
-#  datasource:
-#    url: jdbc:postgresql://postgresql:5432/postgres
-#    username: postgres
-#    password: root

@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+#  postgresql:
+#    image: arm64v8/postgres:latest
+#    environment:
+#      - POSTGRES_PASSWORD=root
+#    expose:
+#      - 5432
+#    ports:
+#      - "5432:5432"
+#    networks:
+#      - default
+#  mongodb:
+#    image: arm64v8/mongo:latest
+#    environment:
+#      - MONGO_INITDB_ROOT_USERNAME=mongo
+#      - MONGO_INITDB_ROOT_PASSWORD=mongo
+#    expose:
+#      - 27017
+#    ports:
+#      - "27017:27017"
+#    networks:
+#      - default
+  loki:
+    image: grafana/loki:main-44f1d8d
+    expose:
+      - 3100
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - default
+  promtail:
+    image: grafana/promtail:main
+    command: >
+      -client.url=http://loki:3100/loki/api/v1/push
+    networks:
+      - default
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - default
+
+networks:
+  default:
