@@ -69,6 +69,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1.0/user:login", "/api/v1.0/user:signup").permitAll()
+                .antMatchers(HttpMethod.GET, "/manage/**").permitAll()
                 .anyRequest().authenticated();
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
