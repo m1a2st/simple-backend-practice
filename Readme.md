@@ -23,12 +23,12 @@
 | Y     | 🔒 正確使用 Lock                     | [Spring Data JPA](https://spring.io/projects/spring-data-jpa) |
 | Y     | 📖 查詢資料分頁                        | [Spring Data](https://spring.io/projects/spring-data) |
 | Y     | 🔗 連接 NoSQL 資料庫                  | [Spring Data](https://spring.io/projects/spring-data) |
-|       | 🗣️ 調用 RESTFul API Client 呼叫其他服務 | [Spring Framework](https://docs.spring.io/spring-framework/docs/current/reference/html/integration.html#rest-client-access) |
+| Y     | 🗣️ 調用 RESTFul API Client 呼叫其他服務 | [Spring Framework](https://docs.spring.io/spring-framework/docs/current/reference/html/integration.html#rest-client-access) |
 |       | ⏱️ 排程定期執行任務 | [Spring Framework](https://docs.spring.io/spring-framework/docs/current/reference/html/integration.html#scheduling) |
-|       | 🧰 整合測試    | [Spring Framework](https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html) |
-|       | 🧱 部署系統    | [jib](https://github.com/GoogleContainerTools/jib), [Docker Compose](https://docs.docker.com/compose/) |
+| Y     | 🧰 整合測試    | [Spring Framework](https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html) |
+| Y     | 🧱 部署系統    | [jib](https://github.com/GoogleContainerTools/jib), [Docker Compose](https://docs.docker.com/compose/) |
 |       | 📃 輸出系統日誌  | [Loki in Grafana Stack](https://grafana.com/products/enterprise/) |
-|       | 👁️ 觀測系統狀態 | [Spring Actuator](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator), [Grafana Stack](https://grafana.com/products/enterprise/) |
+| Y     | 👁️ 觀測系統狀態 | [Spring Actuator](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator), [Grafana Stack](https://grafana.com/products/enterprise/) |
 |       | ♻️ 持續集成/佈署 | [GitHub Action](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven) |
 
 ## 目前類別圖
