@@ -29,7 +29,6 @@
                 %d{yyyy-MM-dd HH:mm:ss} - %msg%n
             </pattern>
         </encoder>
-
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
             <fileNamePattern>${basePath}/archived/debug.%d{yyyy-MM-dd}.%i.log
@@ -40,9 +39,24 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://promtail:9080/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=my-app,host=${HOSTNAME},level=%level</pattern>
+            </label>
+            <message>
+                <pattern>l=%level h=${HOSTNAME} c=%logger{20} t=%thread | %msg %ex</pattern>
+            </message>
+            <sortByTime>true</sortByTime>
+        </format>
+    </appender>
     <!--    與 <logger> 相同元素組成，不同是 <root> 為所有 <logger> 的上級，只有一個 level 屬性可使用，並無法像 logger 一樣用 name 指定實體 class 或Package。但一樣可以指定使用的 Appender-->
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE-OUT"/>
+        <appender-ref ref="LOKI"/>
     </root>
 </configuration>
