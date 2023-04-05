@@ -31,8 +31,8 @@ spring:
     password: root
   datasource:
     url: jdbc:postgresql://localhost:5432/Test
-    username: ken
-    password: isabella1637
+    username: postgres
+    password: root
   data:
     mongodb:
       uri: mongodb://127.0.0.1:8888/
