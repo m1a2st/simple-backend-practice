@@ -51,7 +51,7 @@ public class MockServerTest {
             mockWebServer.start(mockWebServerPort);
             mockWebServer.setDispatcher(new Dispatcher() {
                 @Override
-                public MockResponse dispatch(@NotNull RecordedRequest recordedRequest) throws InterruptedException {
+                public @NotNull MockResponse dispatch(@NotNull RecordedRequest recordedRequest) {
                     if (recordedRequest.getPath().matches("/")) {
                         return new MockResponse().setBody("123.jpeg");
                     } else {

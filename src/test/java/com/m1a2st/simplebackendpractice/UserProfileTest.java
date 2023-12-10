@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
 
@@ -178,9 +177,11 @@ public class UserProfileTest {
 
     @Test
     void user_get_records() throws Exception {
-        signupAndLoginDoSomething(get("/api/v1.0/user/records"))
+        MvcResult mvcResult = signupAndLoginDoSomething(get("/api/v1.0/user/records"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andReturn();
+        mvcResult.getResponse().getContentAsString();
     }
 
     private ResultActions login(LoginRequestDTO loginRequestDTO) throws Exception {

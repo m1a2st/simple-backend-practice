@@ -3,6 +3,7 @@ package com.m1a2st.simplebackendpractice.user.controller;
 import com.m1a2st.simplebackendpractice.config.security.LoginRequestDTO;
 import com.m1a2st.simplebackendpractice.user.dto.*;
 import com.m1a2st.simplebackendpractice.user.po.UserProfile;
+import com.m1a2st.simplebackendpractice.user.repository.UserProfileRepository;
 import com.m1a2st.simplebackendpractice.user.service.impl.UserProfileService;
 import com.m1a2st.simplebackendpractice.utils.JwtTokenUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,10 +42,13 @@ public class UserProfileController {
 
     private final UserProfileService userProfileService;
     private final JwtTokenUtils jwtTokenUtils;
+    private final UserProfileRepository userProfileRepository;
 
-    public UserProfileController(@Valid UserProfileService userProfileService, JwtTokenUtils jwtTokenUtils) {
+    public UserProfileController(@Valid UserProfileService userProfileService, JwtTokenUtils jwtTokenUtils,
+                                 UserProfileRepository userProfileRepository) {
         this.userProfileService = userProfileService;
         this.jwtTokenUtils = jwtTokenUtils;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Operation(summary = "註冊用戶")

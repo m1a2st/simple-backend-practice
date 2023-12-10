@@ -3,7 +3,7 @@
 <!--<debug>: 是否印出 Logback 服務運行的 Log，預設為 false-->
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <!--    <property>: 是一個設計固定的 Name 和 Value 的參數，可插入到標註為 ${} 的文中-->
-    <property name="basePath" value="/Users/ken/Desktop"/>
+    <property name="basePath" value="/Users/ken/Desktop/archived"/>
     <property name="serviceName" value="backend_debug"/>
     <!--    獲取時間戳記的設定-->
     <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
@@ -31,7 +31,7 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>${basePath}/archived/debug.%d{yyyy-MM-dd}.%i.log
+            <fileNamePattern>${basePath}/%d{yyyyMMdd}/debug.%d{yyyy-MM-dd}.%i.log
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -41,7 +41,7 @@
     </appender>
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
-            <url>http://promtail:9080/loki/api/v1/push</url>
+            <url>http://loki:3100/loki/api/v1/push</url>
         </http>
         <format>
             <label>
@@ -57,6 +57,6 @@
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE-OUT"/>
-        <appender-ref ref="LOKI"/>
+<!--        <appender-ref ref="LOKI"/>-->
     </root>
 </configuration>

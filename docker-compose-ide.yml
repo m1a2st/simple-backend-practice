@@ -24,21 +24,33 @@ services:
 #      - default
   loki:
     image: grafana/loki:main-44f1d8d
+    container_name: LOKI
     expose:
       - 3100
+#    volumes:
+#      - ./loki/:/etc/loki/
+#    command: -config.file=/etc/loki/loki.yml
     ports:
       - "3100:3100"
-    command: -config.file=/etc/loki/local-config.yaml
     networks:
       - default
   promtail:
     image: grafana/promtail:main
-    command: >
-      -client.url=http://loki:3100/loki/api/v1/push
+    expose:
+      - 9090
+    ports:
+      - "9090:9090"
+    volumes:
+      - /Users/ken/Desktop/archived:/var/log
+      - ./promtail.yml:/etc/promtail/promtail.yml
+    command:
+      - -config.file=/etc/promtail/promtail.yml
     networks:
       - default
   grafana:
     image: grafana/grafana:latest
+    expose:
+      - 3000
     ports:
       - "3000:3000"
     networks:

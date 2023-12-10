@@ -3,10 +3,7 @@ package com.m1a2st.simplebackendpractice.user.dto;
 import com.m1a2st.simplebackendpractice.user.enu.UserStatus;
 import com.m1a2st.simplebackendpractice.user.po.UserProfile;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -19,6 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@EqualsAndHashCode
 public class UserDetailDTO {
 
     @Schema(description = "使用者編號")

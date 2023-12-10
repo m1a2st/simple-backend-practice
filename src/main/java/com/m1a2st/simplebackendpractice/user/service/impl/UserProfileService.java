@@ -33,7 +33,7 @@ import java.util.Date;
  * @Version v1.0
  */
 @Slf4j
-@Service
+@Service("userProfileService")
 public class UserProfileService implements com.m1a2st.simplebackendpractice.user.service.UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
